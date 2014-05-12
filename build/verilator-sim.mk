@@ -8,8 +8,9 @@ ifeq ("$(MODULE_NAME)","")
 $(error no module name)
 endif
 
-MODULE_BIN := bin/$(MODULE_NAME)
-MODULE_OBJDIR := obj/verilated/$(MODULE_NAME)
+MODULE_OBJDIR := sim/$(MODULE_NAME)-vsim
+MODULE_RUN := $(MODULE_NAME)-vsim
+MODULE_BIN := $(MODULE_OBJDIR)/Vtestbench
 
 MODULE_OPTS := --top-module testbench -Ihdl
 MODULE_OPTS += --Mdir $(MODULE_OBJDIR)
@@ -29,9 +30,10 @@ $(MODULE_BIN): $(MODULE_SRCS)
 	@$(VERILATOR) $(_OPTS) $(_SRCS)
 	@echo "COMPILE (C++): $(_NAME)"
 	@make -C $(_DIR) -f Vtestbench.mk
-	@cp $(_DIR)/Vtestbench $@
 
-VERILATOR_ALL += $(MODULE_BIN)
+$(MODULE_RUN): _BIN := $(MODULE_BIN)
+$(MODULE_RUN): $(MODULE_BIN)
+	@$(_BIN)
 
 MODULE_NAME :=
 MODULE_SRCS :=

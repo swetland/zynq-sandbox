@@ -24,17 +24,19 @@ MODULE_SRCS := axi4_sram_ip.v axi4_sram_impl.sv
 MODULE_SRCS += axi4_sram.sv axi4_ifc.sv
 include build/package-ip.mk
 
-test2.xpr: build/create_test2.tcl build/create_test2_design1.tcl
-	$(TOOLPATH)/vivado -nolog -nojournal -mode batch -source build/create_test2.tcl
-
-MODULE_NAME := axi4_sram_test
+MODULE_NAME := axi4-sram-test
 MODULE_SRCS := hdl/axi4_sram_testbench.sv
 MODULE_SRCS += hdl/axi4_ifc.sv hdl/axi4_sram.sv hdl/axi4_write_test.sv
-include build/verilated-exe.mk
+include build/verilator-sim.mk
+
+MODULE_NAME := axi4-sram-test
+MODULE_SRCS := hdl/axi4_sram_xsim.sv
+MODULE_SRCS += hdl/axi4_ifc.sv hdl/axi4_sram.sv hdl/axi4_write_test.sv
+include build/vivado-xsim.mk
 
 ip:: $(IP_ALL)
 
 verilated:: $(VERILATOR_ALL)
 
 clean::
-	rm -rf obj bin ip
+	rm -rf obj bin ip sim

@@ -8,8 +8,9 @@ VERILATOR := VERILATOR_ROOT=/work/verilator /work/verilator/bin/verilator
 VIVADOPATH := /work/xilinx/Vivado/2014.1
 XSDKPATH := /work/xilinx/SDK/2014.1
 
-XSIM := $(VIVADOPATH)/bin/xsim
 VIVADO := $(VIVADOPATH)/bin/vivado
+XELAB := $(VIVADOPATH)/bin/xelab
+XSIM := $(VIVADOPATH)/bin/xsim
 XMD := $(XSDKPATH)/bin/xmd
 
 ifeq ("$(VERBOSE)","")
