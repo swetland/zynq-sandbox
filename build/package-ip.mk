@@ -23,12 +23,16 @@ $(IP_DIR)/hdl/%.sv: hdl/%.sv
 	@mkdir -p $(dir $@)
 	@ln -sf ../../../$< $@
 
+# blackbox verilog for xilinx fpga-specific macros
+IP_VOPTS := -I$(VIVADOPATH)/data/verilog/src/xeclib
+
 $(IP_FILE): _NAME := $(IP_NAME)
 $(IP_FILE): _DIR := $(IP_DIR)
+$(IP_FILE): _VOPTS := $(IP_VOPTS)
 
 $(IP_FILE): $(IP_LINKS) $(addprefix hdl/,$(IP_SRCS))
 	@echo "LINT (verilator): $(_NAME)"
-	@$(VERILATOR) --lint-only -I$(_DIR)/hdl $(_DIR)/hdl/$(_NAME)_ip.v
+	@$(VERILATOR) $(_VOPTS) --lint-only -I$(_DIR)/hdl $(_DIR)/hdl/$(_NAME)_ip.v
 	@echo "PACKAGE-IP (vivado): $(_NAME)"
 	@$(VIVADO) -nolog -nojournal -mode batch -source build/package-ip.tcl -tclargs $(_DIR) $(VIVADO_FILTER)
 
