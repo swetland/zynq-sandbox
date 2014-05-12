@@ -4,22 +4,52 @@ Warning:  This is very much a work in progress.
 
 Naming Conventions
 ------------------
-module_ip.v        - top level module for Vivado IP packaging
-module_impl.sv     - glue between top level module and implementation
-                     (mostly because systemverilog is disallowed in IP
-                      top modules, so we can't instantiate interfaces
-                      in them -- sadness)
-axi4_*             - implements AXI4 master and/or slave interface
-axi4lite_*         - implements AXI4LITE master and/or slave interface
-*_testbench.sv     - contains a verilator-friendly testbench module
+module_ip.v          - top level module for Vivado IP packaging
+module_impl.sv       - glue between top level module and implementation
+                       (mostly because systemverilog is disallowed in IP
+                        top modules, so we can't instantiate interfaces
+                        in them -- sadness)
+axi4_*               - implements AXI4 master and/or slave interface
+axi4lite_*           - implements AXI4LITE master and/or slave interface
+*_testbench.sv       - contains a verilator-friendly testbench module
 
 Repository Layout
 -----------------
-hdl/...            - verilog and systemverilg sources
-build/...          - makefiles and tcl scripts
+hdl/...              - verilog and systemverilg sources
+build/...            - makefiles and tcl scripts
 
 Generated Files
 ---------------
-ip/${name}/...     - where Vivado IP packages are generated
-obj/verilated/...  - where Verilator intermediates are generated
-bin/...            - where executables end up
+ip/${name}/...       - where Vivado IP packages are generated
+sim/${name}-vsim/... - where Verilator intermediates are generated
+sim/${name}-xsim/... - where Vivado xsim intermediates are generated
+bin/...              - where executables end up
+
+
+Build System Notes
+------------------
+
+1. Declare the name of the module and its sources (.v, .sv, .hex):
+
+MODULE_NAME := ...  
+MODULE_SRCS := ...
+
+2. invoke the appropriate build rules for the module type:
+
+include build/verilator-sim.mk 
+  - create Verilator simulation target
+  - required: a top level module named testbench(input clk)
+  - provided: clock signal
+  - to run:  make modulename-vsim
+
+include build/vivado-xsim.mk
+  - create Vivado Xsim simulation target
+  - required: a top level module named testbench
+  - to run:  make modulename-xsim
+
+include build/package-ip.mk
+  - package as Vivado IP Integrator Module
+  - required: a top level module named modulename_ip
+  - to build:  make modulename-ip
+  - to build all:  make ip
+

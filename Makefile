@@ -36,7 +36,5 @@ include build/vivado-xsim.mk
 
 ip:: $(IP_ALL)
 
-verilated:: $(VERILATOR_ALL)
-
 clean::
 	rm -rf obj bin ip sim

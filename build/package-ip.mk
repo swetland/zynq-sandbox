@@ -32,6 +32,8 @@ $(IP_FILE): $(IP_LINKS) $(addprefix hdl/,$(IP_SRCS))
 	@echo "PACKAGE-IP (vivado): $(_NAME)"
 	@$(VIVADO) -nolog -nojournal -mode batch -source build/package-ip.tcl -tclargs $(_DIR) $(VIVADO_FILTER)
 
+$(IP_NAME)-ip:: $(IP_FILE)
+
 IP_ALL += $(IP_FILE)
 
 MODULE_NAME :=
