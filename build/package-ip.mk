@@ -29,15 +29,22 @@ IP_VOPTS := -I$(VIVADOPATH)/data/verilog/src/xeclib
 $(IP_FILE): _NAME := $(IP_NAME)
 $(IP_FILE): _DIR := $(IP_DIR)
 $(IP_FILE): _VOPTS := $(IP_VOPTS)
-
 $(IP_FILE): $(IP_LINKS) $(addprefix hdl/,$(IP_SRCS))
 	@echo "LINT (verilator): $(_NAME)"
 	@$(VERILATOR) $(_VOPTS) --lint-only -I$(_DIR)/hdl $(_DIR)/hdl/$(_NAME)_ip.v
 	@echo "PACKAGE-IP (vivado): $(_NAME)"
 	@$(VIVADO) -nolog -nojournal -mode batch -source build/package-ip.tcl -tclargs $(_DIR) $(VIVADO_FILTER)
 
+$(IP_NAME)-lint: _NAME := $(IP_NAME)
+$(IP_NAME)-lint: _DIR := $(IP_DIR)
+$(IP_NAME)-lint: _VOPTS := $(IP_VOPTS)
+$(IP_NAME)-lint:: $(addprefix hdl/,$(IP_SRCS))
+	@echo "LINT (verilator): $(_NAME)"
+	@$(VERILATOR) $(_VOPTS) --lint-only -I$(_DIR)/hdl $(_DIR)/hdl/$(_NAME)_ip.v
+
 $(IP_NAME)-ip:: $(IP_FILE)
 
+ 
 IP_ALL += $(IP_FILE)
 
 MODULE_NAME :=
