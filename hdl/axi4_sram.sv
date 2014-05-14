@@ -17,7 +17,12 @@
 
 module axi4_sram(
 	input clk,
-	axi4_ifc.slave s
+	axi4_ifc.slave s,
+	output o_we,
+	output [11:0]o_waddr,
+	output [31:0]o_wdata,
+	output [11:0]o_raddr,
+	input [31:0]i_rdata
 	);
 
 // inherit configuration from AXI interface
@@ -180,17 +185,10 @@ always_ff @(posedge clk) begin
 	s.rid <= next_rid;
 end
 
-// --- sram ----
-
-reg [`DWIDTH-1:0]memory[0:4095];
-
-always @(posedge clk) begin
-	if (do_mem_wr) begin
-		$display("mem[%x] = %x", waddr, s.wdata);
-		memory[waddr[13:2]] <= s.wdata;
-	end
-	//TODO: only when needed:
-	s.rdata <= memory[next_raddr[13:2]];
-end
+assign o_we = do_mem_wr;
+assign o_waddr = waddr[13:2];
+assign o_wdata = s.wdata;
+assign o_raddr = next_raddr[13:2];
+assign s.rdata = i_rdata;
 
 endmodule

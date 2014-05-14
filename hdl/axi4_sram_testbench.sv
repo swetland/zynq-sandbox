@@ -28,7 +28,7 @@ initial axi0.arsize = 2;
 initial axi0.arcache = 0;
 initial axi0.arprot = 0;
 
-always @(posedge clk) begin
+always_ff @(posedge clk) begin
 	count <= count + 1;
 	if (count == 32'd50) begin
 		axi0.araddr <= 0;
@@ -59,9 +59,30 @@ axi4_write_test writer(
 	.m(axi0)
 	);
 
+wire we;
+wire [11:0]waddr;
+wire [11:0]raddr;
+wire [31:0]wdata;
+wire [31:0]rdata;
+
 axi4_sram sram(
 	.clk(clk),
-	.s(axi0)
+	.s(axi0),
+	.o_we(we),
+	.o_waddr(waddr),
+	.o_wdata(wdata),
+	.o_raddr(raddr),
+	.i_rdata(rdata)
 	);
+
+reg [31:0]memory[0:4095];
+
+always @(posedge clk) begin
+	if (we) begin
+		$display("mem[%x] = %x", { waddr, 2'b00 }, wdata);
+		memory[waddr] <= wdata;
+	end
+	rdata <= memory[raddr];
+end
 
 endmodule
