@@ -75,14 +75,19 @@ axi4_sram sram(
 	.i_rdata(rdata)
 	);
 
-reg [31:0]memory[0:4095];
+import "DPI-C" function void dpi_mem_write(integer addr, integer data);
+import "DPI-C" function void dpi_mem_read(integer addr, output integer data);
+
+//reg [31:0]memory[0:4095];
+
+assign rdata = 0;
 
 always @(posedge clk) begin
 	if (we) begin
-		$display("mem[%x] = %x", { waddr, 2'b00 }, wdata);
-		memory[waddr] <= wdata;
+		dpi_mem_write({20'd0,waddr}, wdata);
+		//memory[waddr] <= wdata;
 	end
-	rdata <= memory[raddr];
+	//rdata <= memory[raddr];
 end
 
 endmodule
