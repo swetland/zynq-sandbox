@@ -49,6 +49,8 @@ $(MODULE_BIT): $(MODULE_HEX_SRCS) $(MODULE_CFG)
 
 $(MODULE_NAME): $(MODULE_BIT)
 
+$(MODULE_NAME)-review: _DIR := $(MODULE_OBJDIR)
+
 $(MODULE_NAME)-review: $(MODULE_BIT)
 	@(cd $(_DIR) && $(VIVADO) -nolog -nojournal post-route-checkpoint.dcp)
 
