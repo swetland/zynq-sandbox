@@ -23,7 +23,7 @@ parameter AXI3 = 0;
 
 localparam LENMAX = AXI3 ? 3 : 7;
 localparam LOCKMAX = AXI3 ? 1 : 0;
-localparam SIZEMAX = AXI3 ? 1 : 0;
+localparam SIZEMAX = AXI3 ? 1 : 2;
 
 logic [IWIDTH-1:0] awid;
 logic [AWIDTH-1:0] awaddr;
