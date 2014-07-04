@@ -1,0 +1,54 @@
+
+This is a collection of tools, scripts, verilog, etc, for experimenting
+with the Xilinx Zynq SoC FPGA, particularly around using a commandline
+workflow and avoiding the IPI (IP Integrator) workflow.
+
+An earlier version that attempted to make use of IPI from the commandline
+lives in the deprecated-v0 branch.
+
+Warning:  This is very much a work in progress.
+
+Projects
+--------
+zybo-hdmi            - display a test pattern ZYBO board's HDMI output
+zybo-hdmi-axi        - same, but add an axi slave to adjust the pattern
+
+Repository Layout
+-----------------
+hdl/...              - verilog, systemverilog, and xdc sources
+build/...            - makefiles and tcl scripts
+
+Generated Files
+---------------
+ip/${name}/...       - where Vivado IP packages are generated
+sim/${name}-vsim/... - where Verilator intermediates are generated
+synth/${name}/...    - where Vivado synthesis intermediates are generated
+out/...              - where FPGA final products (bitfiles/etc) end up
+out/${name}.bit      - bitfile for project name
+
+Build System Notes
+------------------
+
+1. Declare the name of the module and its sources (.v, .sv, .hex):
+
+MODULE_NAME := ...  
+MODULE_SRCS := ...
+
+2. invoke the appropriate build rules for the module type:
+
+include build/verilator-sim.mk 
+  - create Verilator simulation target
+  - required: a top level module named testbench(input clk)
+  - provided: clock signal
+  - to run:  make modulename-vsim
+
+include build/vivado-bitfile.mk
+  - create Xilinx out/$(MODULE_NAME).bit bitfile 
+  - target device MODULE_PART
+  - required: a top level module named top
+  - to build:  make modulename
+
+Tools
+-----
+build/mkzynq.go      - Generates useful wrappers around Zynq PS7 macro
+
