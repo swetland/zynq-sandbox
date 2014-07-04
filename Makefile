@@ -24,5 +24,12 @@ MODULE_SRCS += $(HDMI_SRCS)
 MODULE_SRCS += hdl/zybo_hdmi.xdc
 include build/vivado-bitfile.mk
 
+MODULE_NAME := axi-write-to-sram
+MODULE_SRCS := hdl/test/axi_write_to_sram.sv
+MODULE_SRCS += hdl/axi_ifc.sv
+MODULE_SRCS += hdl/axi_sram.sv
+MODULE_SRCS += hdl/axi_pattern_writer.sv
+include build/verilator-sim.mk
+
 clean::
 	rm -rf sim synth out
