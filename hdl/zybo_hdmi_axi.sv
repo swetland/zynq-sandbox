@@ -124,22 +124,45 @@ axi_dma_reader reader(
 reg fifo_reset = 0;
 reg [23:0]pattern = 0;
 
+reg cbufwe = 0;
+reg [11:0]cbufaddr = 0;
+reg [7:0]cbufdata = 0;
+
 always_ff @(posedge axiclk) begin
 	if (wr) begin
 		case (wreg)
 		0: fifo_reset <= 1;
 		1: fb_enable <= wdata[0];
 		2: pattern <= wdata[23:0];
-		default: ;
+		3: begin
+			cbufwe <= 1;
+			cbufaddr <= wdata[27:16];
+			cbufdata <= wdata[7:0];
+		end
 		endcase
 	end else begin
 		fifo_reset <= 0;
+		cbufwe <= 0;
 	end
 end
 
+wire text;
+
+textdisplay textdisplay0(
+	.pixclk(pixclk),
+	.xpixel(xpixel),
+	.ypixel(ypixel),
+	.pixel(text),
+	.bufclk(axiclk),
+	.bufaddr(cbufaddr),
+	.bufdata(cbufdata),
+	.bufwe(cbufwe)
+	);
+
 wire [23:0]fifo_data;
 wire fifo_empty;
-assign {red,grn,blu} = fifo_empty ? pattern : fifo_data;
+
+assign {red,grn,blu} = text ? 24'hffffff : (fifo_empty ? pattern : fifo_data);
 
 xilinx_async_fifo #(.WIDTH(24)) fifo(
 	.wrclk(axiclk),

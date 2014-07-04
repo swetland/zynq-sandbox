@@ -17,6 +17,8 @@ MODULE_SRCS += hdl/zynq_ps_1m_1s.sv
 MODULE_SRCS += hdl/xilinx_async_fifo.sv hdl/sync_oneway.sv
 MODULE_SRCS += hdl/axi_dma_reader.sv
 MODULE_SRCS += $(HDMI_SRCS)
+MODULE_SRCS += hdl/chardata8x8.hex
+MODULE_SRCS += hdl/textdisplay.sv
 MODULE_SRCS += hdl/zybo_hdmi.xdc
 include build/vivado-bitfile.mk
 
