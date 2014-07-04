@@ -24,7 +24,7 @@ module top(
 
 wire pixclk, pixclkx5, pixclkx10;
 wire [10:0] xpixel, ypixel;
-reg [7:0] red, grn, blu;
+wire [7:0] red, grn, blu;
 
 mmcm_1in_3out #(
 	.CLKIN_PERIOD(8.0),
@@ -39,6 +39,9 @@ mmcm_1in_3out #(
 	.o_clk1(pixclkx5),
 	.o_clk2(pixclkx10)
 	);
+
+wire rgb_ready;
+wire vsync_raw;
 
 hdmi_core #(
 	// 640x480 @60 25MHz
@@ -57,28 +60,34 @@ hdmi_core #(
 	.hdmi_d_n(hdmi_d_n),
 	.hdmi_clk_p(hdmi_clk_p),
 	.hdmi_clk_n(hdmi_clk_n),
-	.rgb_ready(),
+	.rgb_ready(rgb_ready),
 	.red(red),
 	.grn(grn),
 	.blu(blu),
 	.xpixel(xpixel),
-	.ypixel(ypixel)
+	.ypixel(ypixel),
+	.vblank(vsync_raw)
 	);
 
-// test pattern
-always @(posedge pixclk) begin
-	red <= xpixel[3] ? 8'hFF : 8'h00;
-	grn <= ypixel[3] ? 8'hFF : 8'h00;
-end
-
 wire axiclk;
+wire vsync;
+
+sync_oneway sync_vsync(
+	.txclk(pixclk),
+	.txdat(vsync_raw),
+	.rxclk(axiclk),
+	.rxdat(vsync)
+	);
 
 axi_ifc #(.IWIDTH(12),.AXI3(1)) axi_ctl();
+axi_ifc #(.IWIDTH(6),.AXI3(1)) axi_dma();
 
 zynq_ps7 zynq(
 	.fclk0(axiclk),
 	.m_axi_gp0_clk(axiclk),
-	.m_axi_gp0(axi_ctl)
+	.m_axi_gp0(axi_ctl),
+	.s_axi_gp0_clk(axiclk),
+	.s_axi_gp0(axi_dma)
 	);
 
 wire [31:0]wdata;
@@ -96,8 +105,53 @@ axi_registers regs(
 	.o_wr(wr)
 	);
 
-always @(posedge axiclk)
-	if (wr)
-		blu <= wdata[7:0];
+wire [31:0]fb_data;
+wire fb_valid;
+reg fb_enable = 0;
+wire fifo_ready;
+
+axi_dma_reader reader(
+	.clk(axiclk),
+	.m(axi_dma),
+	.o_data(fb_data),
+	.o_valid(fb_valid),
+	.i_start(fb_enable & vsync),
+	.i_ready(fifo_ready),
+	.i_baseaddr(32'h10000000),
+	.i_burst_count(36000)
+	);
+
+reg fifo_reset = 0;
+reg [23:0]pattern = 0;
+
+always_ff @(posedge axiclk) begin
+	if (wr) begin
+		case (wreg)
+		0: fifo_reset <= 1;
+		1: fb_enable <= wdata[0];
+		2: pattern <= wdata[23:0];
+		default: ;
+		endcase
+	end else begin
+		fifo_reset <= 0;
+	end
+end
+
+wire [23:0]fifo_data;
+wire fifo_empty;
+assign {red,grn,blu} = fifo_empty ? pattern : fifo_data;
+
+xilinx_async_fifo #(.WIDTH(24)) fifo(
+	.wrclk(axiclk),
+	.rdclk(pixclk),
+	.reset(fifo_reset),
+	.wr_data(fb_data[23:0]),
+	.wr_en(fb_valid),
+	.rd_data(fifo_data),
+	.rd_en(rgb_ready),
+	.o_empty(fifo_empty),
+	.o_ready(fifo_ready),
+	.o_active()
+	);
 
 endmodule

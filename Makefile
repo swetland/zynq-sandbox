@@ -12,7 +12,10 @@ HDMI_SRCS := \
 MODULE_NAME := zybo-hdmi-axi
 MODULE_PART := xc7z010clg400-2
 MODULE_SRCS := hdl/zybo_hdmi_axi.sv
-MODULE_SRCS += hdl/axi_ifc.sv hdl/axi_registers.sv hdl/zynq_ps_1m.sv
+MODULE_SRCS += hdl/axi_ifc.sv hdl/axi_registers.sv
+MODULE_SRCS += hdl/zynq_ps_1m_1s.sv
+MODULE_SRCS += hdl/xilinx_async_fifo.sv hdl/sync_oneway.sv
+MODULE_SRCS += hdl/axi_dma_reader.sv
 MODULE_SRCS += $(HDMI_SRCS)
 MODULE_SRCS += hdl/zybo_hdmi.xdc
 include build/vivado-bitfile.mk
