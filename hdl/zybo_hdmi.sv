@@ -62,7 +62,8 @@ hdmi_core #(
 	.grn(grn),
 	.blu(blu),
 	.xpixel(xpixel),
-	.ypixel(ypixel)
+	.ypixel(ypixel),
+	.vblank()
 	);
 
 // test pattern

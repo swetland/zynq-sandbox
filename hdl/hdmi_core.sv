@@ -29,7 +29,8 @@ module hdmi_core (
 	input [7:0]blu,
 	// core status
 	output [10:0]xpixel,
-	output [10:0]ypixel
+	output [10:0]ypixel,
+	output vblank
 	);
 
 parameter HWIDTH = 960;
@@ -43,6 +44,8 @@ parameter VMAX = 624;
 
 reg [10:0] hcount, vcount;
 reg hsync, vsync, active;
+
+assign vblank = vsync;
 
 always @(posedge pixclk) begin
 	if (hcount == HMAX) begin
