@@ -20,6 +20,7 @@ MODULE_SRCS += $(HDMI_SRCS)
 MODULE_SRCS += hdl/chardata8x8.hex
 MODULE_SRCS += hdl/textdisplay.sv
 MODULE_SRCS += hdl/zybo_hdmi.xdc
+MODULE_SRCS += hdl/zybo_hdmi_fclk.xdc
 include build/vivado-bitfile.mk
 
 MODULE_NAME := zybo-hdmi
