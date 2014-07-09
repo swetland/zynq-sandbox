@@ -3,6 +3,14 @@ include build/init.mk
 
 all:
 
+MODULE_NAME := zybo-simple-io
+MODULE_PART := xc7z010clg400-1
+MODULE_SRCS := hdl/zybo_simple_io.sv
+MODULE_SRCS += hdl/axi_ifc.sv hdl/axi_registers.sv
+MODULE_SRCS += hdl/zynq_ps_1m.sv
+MODULE_SRCS += hdl/zybo_simple_io.xdc
+include build/vivado-bitfile.mk
+
 HDMI_SRCS := \
 	hdl/hdmi_core.sv \
 	hdl/mmcm_1in_3out.sv \
