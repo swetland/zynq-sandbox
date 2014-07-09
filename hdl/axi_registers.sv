@@ -110,6 +110,7 @@ rstate_t rstate_next;
 
 reg arready_next;
 reg rvalid_next;
+reg rlast_next;
 
 reg [31:0]rdata;
 reg [31:0]rdata_next;
@@ -128,6 +129,7 @@ always_comb begin
 	trid_next = trid;
 	arready_next = 0;
 	rvalid_next = 0;
+	rlast_next = 0;
 	rd_next = 0;
 	case (rstate)
 	R_ADDR: if (s.arvalid) begin
@@ -143,6 +145,7 @@ always_comb begin
 			// present address and rd to register file
 			rstate_next = R_DATA;
 			rvalid_next = 1;
+			rlast_next = 1;
 			rdata_next = i_rdata;
 		end
 	R_DATA: if (s.rready) begin
@@ -151,6 +154,7 @@ always_comb begin
 			arready_next = 1;
 		end else begin
 			rvalid_next = 1;
+			rlast_next = 1;
 		end
 	endcase
 end
@@ -169,6 +173,7 @@ always_ff @(posedge clk) begin
 	trid <= trid_next;
 	s.arready <= arready_next;
 	s.rvalid <= rvalid_next;
+	s.rlast <= rlast_next;
 	o_rreg <= rreg_next;
 	o_rd <= rd_next;
 end
