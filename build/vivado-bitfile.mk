@@ -54,6 +54,12 @@ $(MODULE_NAME)-review: _DIR := $(MODULE_OBJDIR)
 $(MODULE_NAME)-review: $(MODULE_BIT)
 	@(cd $(_DIR) && $(VIVADO) -nolog -nojournal post-route-checkpoint.dcp)
 
+
+ALL_TARGETS += $(MODULE_NAME)
+ALL_TARGETS += $(MODULE_NAME)-review
+TARGET_$(MODULE_NAME)_DESC := "build xilinx bitfile"
+TARGET_$(MODULE_NAME)-review_DESC := "build bitfile and review in vivado"
+
 MODULE_NAME :=
 MODULE_SRCS :=
 MODULE_PART :=

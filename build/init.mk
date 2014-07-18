@@ -19,6 +19,5 @@ VIVADO_FILTER := | grep -e "^INFO:.*Inferred" -e "^WARNING:" -e "^ERROR:"
 VIVADO_FILTER += | grep -v '\[Board 49-26\]'
 endif
 
-IP_ALL :=
-VERILATOR_ALL :=
+ALL_TARGETS :=
 

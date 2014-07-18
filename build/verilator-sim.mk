@@ -44,5 +44,8 @@ $(MODULE_RUN): _DIR := $(MODULE_OBJDIR)
 $(MODULE_RUN): $(MODULE_BIN)
 	@(cd $(_DIR) && ./Vtestbench)
 
+ALL_TARGETS += $(MODULE_RUN)
+TARGET_$(MODULE_RUN)_DESC := "run verilator simulation"
+
 MODULE_NAME :=
 MODULE_SRCS :=

@@ -1,7 +1,7 @@
 
 include build/init.mk
 
-all:
+all: list-all-targets
 
 MODULE_NAME := zybo-simple-io
 MODULE_PART := xc7z010clg400-1
@@ -47,3 +47,7 @@ include build/verilator-sim.mk
 
 clean::
 	rm -rf sim synth out
+
+list-all-targets::
+	@echo buildable targets:
+	@for x in $(ALL_TARGETS) ; do echo $$x ; done
