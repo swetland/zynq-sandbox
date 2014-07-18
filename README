@@ -52,3 +52,21 @@ Tools
 -----
 build/mkzynq.go      - Generates useful wrappers around Zynq PS7 macro
 
+Customizing for your Install
+----------------------------
+build/init.mk should point to Xilinx Vivado, Xilinx SDK, and Verilator.
+The default setup assumes you installed the 2014.2 version of the Xilinx
+tools under /work/xilinx/... and built verilator under /work/verilator/...
+
+Building Verilator
+------------------
+You can replace /work with some other convenient directory if you like
+(but be sure to update build/init.mk):
+1. cd /work
+2. git clone http://git.veripool.org/git/verilator
+3. cd verilator
+4. autoconf
+5. ./configure
+6. make -j32
+7. you do not need to make install
+
