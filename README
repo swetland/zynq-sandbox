@@ -62,6 +62,7 @@ Building Verilator
 ------------------
 You can replace /work with some other convenient directory if you like
 (but be sure to update build/init.mk):
+0. install autoconf, bison, flex
 1. cd /work
 2. git clone http://git.veripool.org/git/verilator
 3. cd verilator
@@ -69,4 +70,3 @@ You can replace /work with some other convenient directory if you like
 5. ./configure
 6. make -j32
 7. you do not need to make install
-
