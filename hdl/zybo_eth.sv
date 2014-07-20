@@ -86,15 +86,21 @@ module packetlogger(
 
 reg [11:0]rdptr = 0;
 reg [11:0]rxptr = 0;
-reg [8:0]rxbuffer[0:4095];
+reg [11:0]next_rdptr;
+reg [11:0]next_rxptr;
 
-always_ff @(posedge clk50) begin
-	if (rxvalid | rxeop) begin
-		rxbuffer[rxptr] <= { rxeop, rxdata };
-		if (rxptr != 12'd4095)
-			rxptr <= rxptr + 1;
-	end
-end
+wire [8:0]rdata;
+reg bufrd = 0;
+
+ram rxbuffer(
+	.clk(clk50),
+	.wen(rxvalid | rxeop),
+	.waddr(rxptr),
+	.wdata( { rxeop, rxdata } ),
+	.ren(bufrd),
+	.raddr(rdptr),
+	.rdata(rdata)
+	);
 
 wire [31:0]dbg_wdata;
 reg [31:0]dbg_rdata;
@@ -102,18 +108,30 @@ wire [2:0]dbg_addr;
 wire dbg_rd;
 wire dbg_wr;
 
-always_ff @(posedge clk50) begin
-	if (dbg_rd) begin
-		case (dbg_addr)
-		0: dbg_rdata <= 32'h12345678;
-		1: begin 
-			dbg_rdata <= { 23'd0, rxbuffer[rdptr] };
-			rdptr <= rdptr + 1;
-		end
-		2: dbg_rdata <= { 20'd0, rxptr };
-		default: dbg_rdata <= 0;
-		endcase
+always_comb begin
+	next_rxptr = rxptr;
+	next_rdptr = rdptr;
+	bufrd = 0;
+	if (rxvalid | rxeop) begin
+		next_rxptr = rxptr + 1;
 	end
+	if (dbg_rd) begin
+		if (dbg_addr == 1) begin
+			next_rdptr = rdptr + 1;
+			bufrd = 1;
+		end
+	end
+	case (dbg_addr)
+	0: dbg_rdata = 32'h12345678;
+	1: dbg_rdata = { 23'd0, rdata };
+	2: dbg_rdata = { 20'd0, rxptr };
+	default: dbg_rdata = 0;
+	endcase
+end
+
+always_ff @(posedge clk50) begin
+	rxptr <= next_rxptr;
+	rdptr <= next_rdptr;
 end
 
 (* keep_hierarchy = "yes" *)
@@ -127,3 +145,25 @@ jtag_debug_port port0(
 	);
 
 endmodule
+
+module ram(
+	input clk,
+	input ren,
+	input [11:0]raddr,
+	output reg [8:0]rdata,
+	input wen,
+	input [11:0]waddr,
+	input [8:0]wdata
+	);
+
+reg [8:0]memory[0:4095];
+
+always_ff @(posedge clk) begin
+	if (ren)
+		rdata <= memory[raddr];
+	if (wen)
+		memory[waddr] <= wdata;
+end
+
+endmodule
+
