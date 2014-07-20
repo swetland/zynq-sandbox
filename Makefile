@@ -45,6 +45,17 @@ MODULE_SRCS += hdl/axi_sram.sv
 MODULE_SRCS += hdl/axi_pattern_writer.sv
 include build/verilator-sim.mk
 
+MODULE_NAME := eth-crc32-test
+MODULE_SRCS := hdl/test/eth_crc32_test.sv
+MODULE_SRCS += hdl/eth_crc32.sv
+include build/verilator-sim.mk
+
+MODULE_NAME := eth-rmii-test
+MODULE_SRCS := hdl/test/eth_rmii_test.sv
+MODULE_SRCS += hdl/eth_rmii_tx.sv
+MODULE_SRCS += hdl/eth_rmii_rx.sv
+include build/verilator-sim.mk
+
 clean::
 	rm -rf sim synth out
 
