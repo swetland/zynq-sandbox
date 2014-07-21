@@ -6,7 +6,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports clk]
 create_clock -add -name sys_clk_pin -period 8.00 -waveform {0 4} [get_ports clk]
 
 # 30 MHz JTAG TCK
-create_clock -period 33.333 -name jtag_tck [get_pins port0/bscan/TCK]
+create_clock -period 33.333 -name jtag_tck [get_pins log0/port0/bscan/TCK]
 
 # human readable generated clock name
 create_generated_clock -name clk50 [get_pins mmcm0/mmcm_adv_inst/CLKOUT0]
@@ -38,6 +38,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx1}]
 ##IO_L15P_T2_DQS_34
 set_property PACKAGE_PIN T20 [get_ports {phy0_tx0}]
 set_property IOSTANDARD LVCMOS33 [get_ports {phy0_tx0}]
+set_property SLEW FAST [get_ports {phy0_tx0}]
 
 ##IO_L16N_T2_34
 set_property PACKAGE_PIN W20 [get_ports {phy0_mdc}]
@@ -54,14 +55,18 @@ set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx0}]
 ##IO_L17P_T2_34
 set_property PACKAGE_PIN Y18 [get_ports {phy0_txen}]
 set_property IOSTANDARD LVCMOS33 [get_ports {phy0_txen}]
+set_property SLEW FAST [get_ports {phy0_txen}]
 
 ##IO_L22N_T3_34
 set_property PACKAGE_PIN W19 [get_ports {phy0_mdio}]
 set_property IOSTANDARD LVCMOS33 [get_ports {phy0_mdio}]
+set_property SLEW FAST [get_ports {phy0_mdio}]
 
 ##IO_L22P_T3_34
 set_property PACKAGE_PIN W18 [get_ports {phy0_clk}]
 set_property IOSTANDARD LVCMOS33 [get_ports {phy0_clk}]
+set_property SLEW FAST [get_ports {phy0_clk}]
+set_property DRIVE 8 [get_ports {phy0_clk}]
 
 ##Pmod Header JD
 ##IO_L5N_T0_34
