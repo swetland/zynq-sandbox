@@ -60,9 +60,11 @@ MODULE_NAME := zybo-eth
 MODULE_PART := xc7z010clg400-1
 MODULE_SRCS := hdl/zybo_eth.sv
 MODULE_SRCS += hdl/eth_rmii_rx.sv
+MODULE_SRCS += hdl/eth_rmii_tx.sv
 MODULE_SRCS += hdl/mmcm_1in_3out.sv
 MODULE_SRCS += hdl/jtag_debug_port.sv
 MODULE_SRCS += hdl/zybo_eth.xdc
+MODULE_SRCS += hdl/testpacket.hex
 include build/vivado-bitfile.mk
 
 clean::

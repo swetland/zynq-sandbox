@@ -24,8 +24,7 @@
 module eth_rmii_tx(
 	input clk50,
 
-	output tx0,
-	output tx1,
+	output reg [1:0]tx = 0,
 	output reg txen = 0,
 
 	input [7:0]data,
@@ -46,10 +45,6 @@ reg [7:0] next_txdata;
 
 wire [7:0]txshift = { 2'b0, txdata[7:2] };
 
-reg [1:0]txd = 0;
-reg [1:0]next_txd;
-
-assign { tx1, tx0 } = txd;
 
 reg [5:0] count = 0;
 reg [5:0] next_count;
@@ -59,6 +54,7 @@ wire count_is_zero = (count == 0);
 wire [5:0]count_minus_one = (count - 1);
 
 reg next_txen;
+reg [1:0]next_tx;
 reg next_advance;
 reg next_busy;
 
@@ -67,14 +63,14 @@ always_comb begin
 	next_count = count;
 	next_txdata = txdata;
 	next_busy = busy;
-	next_txd = txd;
+	next_tx = tx;
 	next_txen = 1;
 	next_advance = 0;
 
 	case (state)
 	IDLE: begin
 		next_txen = 0;
-		next_txd = 0;
+		next_tx = 0;
 		if (packet) begin
 			next_state = PRE;
 			next_count = 31;
@@ -86,29 +82,29 @@ always_comb begin
 			next_state = DAT0;
 			next_txdata = data;
 			next_advance = 1;
-			next_txd = 2'b11;
+			next_tx = 2'b11;
 		end else begin
-			next_txd = 2'b01;
+			next_tx = 2'b01;
 			next_count = count_minus_one;
 		end
 	end
 	DAT0: begin
 		next_state = DAT1;
 		next_txdata = txshift;
-		next_txd = txdata[1:0];
+		next_tx = txdata[1:0];
 	end
 	DAT1: begin
 		next_state = DAT2;
 		next_txdata = txshift;
-		next_txd = txdata[1:0];
+		next_tx = txdata[1:0];
 	end
 	DAT2: begin
 		next_state = DAT3;
 		next_txdata = txshift;
-		next_txd = txdata[1:0];
+		next_tx = txdata[1:0];
 	end
 	DAT3: begin
-		next_txd = txdata[1:0];
+		next_tx = txdata[1:0];
 		if (~packet) begin
 			// no more data, wrap it up
 			next_state = EOP;
@@ -120,7 +116,7 @@ always_comb begin
 		end
 	end
 	EOP: begin
-		next_txd = 0;
+		next_tx = 0;
 		next_txen = 0;
 		if (count_is_zero) begin
 			next_state = IDLE;
@@ -137,7 +133,7 @@ always_ff @(posedge clk50) begin
 	count <= next_count;
 	txdata <= next_txdata;
 	txen <= next_txen;
-	txd <= next_txd;
+	tx <= next_tx;
 	advance <= next_advance;
 	busy <= next_busy;
 end

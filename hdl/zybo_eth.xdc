@@ -32,13 +32,13 @@ set_property IOSTANDARD LVCMOS33 [get_ports {led[3]}]
 
 ##Pmod Header JB
 ##IO_L15N_T2_DQS_34
-set_property PACKAGE_PIN U20 [get_ports {phy0_rx1}]
-set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx1}]
+set_property PACKAGE_PIN U20 [get_ports {phy0_rx[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx[1]}]
 
 ##IO_L15P_T2_DQS_34
-set_property PACKAGE_PIN T20 [get_ports {phy0_tx0}]
-set_property IOSTANDARD LVCMOS33 [get_ports {phy0_tx0}]
-set_property SLEW FAST [get_ports {phy0_tx0}]
+set_property PACKAGE_PIN T20 [get_ports {phy0_tx[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {phy0_tx[0]}]
+set_property SLEW FAST [get_ports {phy0_tx[0]}]
 
 ##IO_L16N_T2_34
 set_property PACKAGE_PIN W20 [get_ports {phy0_mdc}]
@@ -49,8 +49,8 @@ set_property PACKAGE_PIN V20 [get_ports {phy0_crs}]
 set_property IOSTANDARD LVCMOS33 [get_ports {phy0_crs}]
 
 ##IO_L17N_T2_34
-set_property PACKAGE_PIN Y19 [get_ports {phy0_rx0}]
-set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx0}]
+set_property PACKAGE_PIN Y19 [get_ports {phy0_rx[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {phy0_rx[0]}]
 
 ##IO_L17P_T2_34
 set_property PACKAGE_PIN Y18 [get_ports {phy0_txen}]
@@ -58,9 +58,9 @@ set_property IOSTANDARD LVCMOS33 [get_ports {phy0_txen}]
 set_property SLEW FAST [get_ports {phy0_txen}]
 
 ##IO_L22N_T3_34
-set_property PACKAGE_PIN W19 [get_ports {phy0_mdio}]
-set_property IOSTANDARD LVCMOS33 [get_ports {phy0_mdio}]
-set_property SLEW FAST [get_ports {phy0_mdio}]
+set_property PACKAGE_PIN W19 [get_ports {phy0_tx[1]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {phy0_tx[1]}]
+set_property SLEW FAST [get_ports {phy0_tx[1]}]
 
 ##IO_L22P_T3_34
 set_property PACKAGE_PIN W18 [get_ports {phy0_clk}]

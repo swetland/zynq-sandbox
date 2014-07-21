@@ -18,14 +18,13 @@ module top(
 	input clk,
 	output [3:0]led,
 
+	output phy0_mdc,
+	//output phy0_mdio,
 	output phy0_clk,
 	output phy0_txen,
-	output phy0_tx0,
-	output phy0_mdc,
-	output phy0_mdio,
+	output [1:0]phy0_tx,
 	input phy0_crs,
-	input phy0_rx0,
-	input phy0_rx1
+	input [1:0]phy0_rx
 	);
 
 assign led = 0;
@@ -48,23 +47,54 @@ mmcm_1in_3out #(
 
 assign phy0_clk = clk50;
 assign phy0_mdc = 1;
-assign phy0_mdio = 0;
-assign phy0_tx0 = 0;
-assign phy0_txen = 0;
 
 wire [7:0]rxdata;
 wire rxvalid;
 wire rxeop;
 
 (* keep_hierarchy = "yes" *)
-eth_rmii_rx phy0(
+eth_rmii_rx phy0rx(
 	.clk50(clk50),
-	.rx0(phy0_rx0),
-	.rx1(phy0_rx1),
+	.rx(phy0_rx),
 	.crs_dv(phy0_crs),
 	.data(rxdata),
 	.valid(rxvalid),
 	.eop(rxeop)
+	);
+
+wire go;
+
+reg [7:0]txptr = 0;
+reg [7:0]pdata[0:63];
+initial $readmemh("testpacket.hex", pdata);
+
+wire txbusy;
+wire txadvance;
+wire [7:0]txdata = pdata[txptr[5:0]];
+reg txpacket = 0;
+
+always @(posedge clk50) begin
+	if (txpacket) begin
+		if (txadvance) begin
+			txptr <= txptr + 1;
+			if (txptr == 63) begin
+				txpacket <= 0;
+				txptr <= 0;
+			end
+		end
+	end else if (go) begin
+		txpacket <= 1;
+	end
+end
+
+eth_rmii_tx phy0tx(
+	.clk50(clk50),
+	.tx(phy0_tx),
+	.txen(phy0_txen),
+	.data(txdata),
+	.packet(txpacket),
+	.busy(txbusy),
+	.advance(txadvance)
 	);
 
 (* keep_hierarchy = "yes" *)
@@ -72,7 +102,8 @@ packetlogger log0(
 	.clk50(clk50),
 	.rxdata(rxdata),
 	.rxvalid(rxvalid),
-	.rxeop(rxeop)
+	.rxeop(rxeop),
+	.go(go)
 	);
 
 endmodule
@@ -81,7 +112,8 @@ module packetlogger(
 	input clk50,
 	input [7:0]rxdata,
 	input rxvalid,
-	input rxeop
+	input rxeop,
+	output reg go = 0
 	);
 
 reg [11:0]rdptr = 0;
@@ -113,7 +145,8 @@ always_comb begin
 	next_rdptr = rdptr;
 	bufrd = 0;
 	if (rxvalid | rxeop) begin
-		next_rxptr = rxptr + 1;
+		if (rxptr != 12'hFFF)
+			next_rxptr = rxptr + 1;
 	end
 	if (dbg_rd) begin
 		if (dbg_addr == 1) begin
@@ -132,6 +165,11 @@ end
 always_ff @(posedge clk50) begin
 	rxptr <= next_rxptr;
 	rdptr <= next_rdptr;
+	if (dbg_wr) begin
+		go <= 1;
+	end else begin
+		go <= 0;
+	end
 end
 
 (* keep_hierarchy = "yes" *)

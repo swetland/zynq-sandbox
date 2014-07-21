@@ -30,8 +30,7 @@
 module eth_rmii_rx(
 	input clk50,
 
-	input rx0,
-	input rx1,
+	input [1:0]rx,
 	input crs_dv,
 
 	output reg [7:0]data = 0,
@@ -52,9 +51,7 @@ reg [7:0]next_data;
 reg next_valid;
 reg next_eop;
 
-wire [7:0]rxshift = { rx1, rx0, data[7:2] };
-
-wire [1:0]rxd = { rx1, rx0 };
+wire [7:0]rxshift = { rx, data[7:2] };
 
 always_comb begin
 	next_state = state;
@@ -63,24 +60,24 @@ always_comb begin
 	next_eop = 0;
 
 	case (state)
-	IDLE: if ((rxd == 2'b01) && (crs_dv == 1)) begin
+	IDLE: if ((rx == 2'b01) && (crs_dv == 1)) begin
 		// crs_dv may go high asynchronously
 		// only move to preamble on crs_dv AND a preamble di-bit
 		next_state = PRE1;
 	end
-	PRE1: if (rxd == 2'b01) begin
+	PRE1: if (rx == 2'b01) begin
 		next_state = PRE2;
 	end else begin
 		next_state = ERR0;
 	end
-	PRE2: if (rxd == 2'b01) begin
+	PRE2: if (rx == 2'b01) begin
 		next_state = PRE3;
 	end else begin
 		next_state = ERR0;
 	end
-	PRE3: if (rxd == 2'b11) begin
+	PRE3: if (rx == 2'b11) begin
 		next_state = DAT0;
-	end else if (rxd == 2'b01) begin
+	end else if (rx == 2'b01) begin
 		next_state = PRE3;
 	end else begin
 		next_state = ERR0;
