@@ -3,6 +3,11 @@ include build/init.mk
 
 all: list-all-targets
 
+MODULE_NAME := eth-mdio-test
+MODULE_SRCS := hdl/eth_mdio.sv
+MODULE_SRCS += hdl/test/eth_mdio_test.sv
+include build/verilator-sim.mk
+
 MODULE_NAME := zybo-simple-io
 MODULE_PART := xc7z010clg400-1
 MODULE_SRCS := hdl/zybo_simple_io.sv
@@ -64,6 +69,18 @@ MODULE_SRCS += hdl/eth_rmii_tx.sv
 MODULE_SRCS += hdl/mmcm_1in_3out.sv
 MODULE_SRCS += hdl/jtag_debug_port.sv
 MODULE_SRCS += hdl/zybo_eth.xdc
+MODULE_SRCS += hdl/testpacket.hex
+include build/vivado-bitfile.mk
+
+MODULE_NAME := nexys4
+MODULE_PART := xc7a100tcsg324-1
+MODULE_SRCS := hdl/nexys4.sv
+MODULE_SRCS += hdl/eth_rmii_rx.sv
+MODULE_SRCS += hdl/eth_rmii_tx.sv
+MODULE_SRCS += hdl/eth_mdio.sv
+MODULE_SRCS += hdl/mmcm_1in_3out.sv
+MODULE_SRCS += hdl/jtag_debug_port.sv
+MODULE_SRCS += hdl/nexys4.xdc
 MODULE_SRCS += hdl/testpacket.hex
 include build/vivado-bitfile.mk
 
