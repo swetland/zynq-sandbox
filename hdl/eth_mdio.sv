@@ -38,9 +38,9 @@ parameter CLKDIV = 16;
 
 //                on phase entry:
 //                -------------------------
-//   .-----.      A mdc=0 shift    
-//   |     |      B mdc=1
-// --'     '--    C mdc=1 capture=i_mdio
+//   .-----.      A mdc=0 shift (new data on o_mdio)
+//   |     |      B mdc=1 capture=i_mdio
+// --'     '--    C mdc=1
 // A  B  C  D     D mdc=0 
 //
 // always: o_mdio=shift[31]
@@ -71,7 +71,7 @@ reg step;
 
 assign o_mdio = shift[31];
 assign t_mdio = tristate;
-assign rxdata = shift[16:1];
+assign rxdata = shift[15:0];
 
 always_comb begin
 	next_tristate = tristate;
@@ -113,12 +113,12 @@ always_comb begin
 	PHA: if (step) begin
 		next_state = PHB;
 		next_mdc = 1;
+		// acquire debounced input
+		next_capture1 = capture0;
 	end
 	PHB: if (step) begin
 		next_state = PHC;
 		next_mdc = 1;
-		// acquire debounced input
-		next_capture1 = capture0;
 	end
 	PHC: if (step) begin
 		next_state = PHD;
