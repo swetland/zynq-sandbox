@@ -59,7 +59,9 @@ eth_rmii_rx phy0rx(
 	.crs_dv(phy0_crs),
 	.data(rxdata),
 	.valid(rxvalid),
-	.eop(rxeop)
+	.eop(rxeop),
+	.out_tx(),
+	.out_txen()
 	);
 
 wire go;

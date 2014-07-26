@@ -18,8 +18,7 @@
 module testbench(input clk);
 
 // RMII transport between tx and rx
-wire eth_d0;
-wire eth_d1;
+wire [1:0]eth_data;
 wire eth_en;
 
 
@@ -30,11 +29,8 @@ wire txadvance;
 
 eth_rmii_tx tx(
 	.clk50(clk),
-
-	.tx0(eth_d0),
-	.tx1(eth_d1),
+	.tx(eth_data),
 	.txen(eth_en),
-
 	.data(txdata),
 	.packet(txpacket),
 	.busy(txbusy),
@@ -47,12 +43,13 @@ wire rxeop;
 
 eth_rmii_rx rx(
 	.clk50(clk),
-	.rx0(eth_d0),
-	.rx1(eth_d1),
+	.rx(eth_data),
 	.crs_dv(eth_en),
 	.data(rxdata),
 	.valid(rxvalid),
-	.eop(rxeop)
+	.eop(rxeop),
+	.out_tx(),
+	.out_txen()
 	);
 
 reg txgo = 0;
