@@ -35,7 +35,12 @@ module eth_rmii_rx(
 
 	output reg [7:0]data = 0,
 	output reg valid = 0,
-	output reg eop = 0
+	output reg eop = 0,
+
+	// transmit outputs which can drive
+	// an eth_rmii_tx to create a repeater
+	output reg [1:0]out_tx = 0,
+	output reg out_txen = 0
 	);
 
 typedef enum {
@@ -53,17 +58,23 @@ reg next_eop;
 
 wire [7:0]rxshift = { rx, data[7:2] };
 
+reg [1:0]delay_tx = 0;
+reg delay_txen = 0;
+reg next_txen;
+
 always_comb begin
 	next_state = state;
 	next_data = data;
 	next_valid = 0;
 	next_eop = 0;
+	next_txen = delay_txen;
 
 	case (state)
 	IDLE: if ((rx == 2'b01) && (crs_dv == 1)) begin
 		// crs_dv may go high asynchronously
 		// only move to preamble on crs_dv AND a preamble di-bit
 		next_state = PRE1;
+		next_txen = 1;
 	end
 	PRE1: if (rx == 2'b01) begin
 		next_state = PRE2;
@@ -91,6 +102,7 @@ always_comb begin
 		if (crs_dv) begin
 			next_state = DAT2;
 		end else begin
+			next_txen = 0;
 			next_state = EOP;
 		end
 	end
@@ -104,6 +116,7 @@ always_comb begin
 			next_state = DAT0;
 			next_valid = 1;
 		end else begin
+			next_txen = 0;
 			next_state = EOP;
 		end
 	end
@@ -113,6 +126,7 @@ always_comb begin
 		next_eop = 1;
 	end
 	ERR0: begin
+		next_txen = 0;
 		if (crs_dv == 0) begin
 			next_state = ERR1;
 		end
@@ -132,6 +146,10 @@ always_ff @(posedge clk50) begin
 	valid <= next_valid;
 	data <= next_data;
 	eop <= next_eop;
+	delay_txen <= next_txen;
+	delay_tx <= rx;
+	out_txen <= next_txen ? delay_txen : 0;
+	out_tx <= next_txen ? delay_tx : 0;
 end
 
 endmodule
