@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+`timescale 1ns / 1ps
+
 (* keep_hierarchy = "yes" *)
 module sync_oneway(
 	input txclk,
