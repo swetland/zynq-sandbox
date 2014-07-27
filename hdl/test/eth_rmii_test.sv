@@ -15,7 +15,13 @@
 
 `timescale 1ns / 1ps
 
+`ifdef verilator
 module testbench(input clk);
+`else
+module testbench();
+reg clk = 0;
+always #5 clk = ~clk;
+`endif
 
 // RMII transport between tx and rx
 wire [1:0]eth_data;
