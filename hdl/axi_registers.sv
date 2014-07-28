@@ -112,9 +112,9 @@ reg arready_next;
 reg rvalid_next;
 reg rlast_next;
 
-reg [31:0]rdata;
-reg [31:0]rdata_next;
-assign s.rdata = rdata;
+//reg [31:0]rdata;
+//reg [31:0]rdata_next;
+assign s.rdata = i_rdata;
 
 reg rd_next;
 
@@ -124,7 +124,7 @@ assign s.rid = trid;
 
 always_comb begin 
 	rstate_next = rstate;
-	rdata_next = rdata;
+	//rdata_next = rdata;
 	rreg_next = o_rreg;
 	trid_next = trid;
 	arready_next = 0;
@@ -146,7 +146,7 @@ always_comb begin
 			rstate_next = R_DATA;
 			rvalid_next = 1;
 			rlast_next = 1;
-			rdata_next = i_rdata;
+			//rdata_next = i_rdata;
 		end
 	R_DATA: if (s.rready) begin
 			// present register data to AXI
@@ -169,7 +169,7 @@ always_ff @(posedge clk) begin
 	o_wreg <= wreg_next;
 
 	rstate <= rstate_next;
-	rdata <= rdata_next;
+	//rdata <= rdata_next;
 	trid <= trid_next;
 	s.arready <= arready_next;
 	s.rvalid <= rvalid_next;
