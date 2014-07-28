@@ -60,6 +60,7 @@ eth_rmii_rx phy0rx(
 	.data(rxdata),
 	.valid(rxvalid),
 	.eop(rxeop),
+	.sop(),
 	.out_tx(),
 	.out_txen()
 	);
