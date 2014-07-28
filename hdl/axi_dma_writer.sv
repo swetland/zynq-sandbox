@@ -60,7 +60,7 @@ reg busy_next;
 wire count_is_zero = (count == 4'h0);
 wire count_is_one = (count == 4'h1);
 
-assign advance = m.wready & busy;
+assign advance = m.wvalid & m.wready & busy;
 
 always_comb begin
 	state_next = state;
