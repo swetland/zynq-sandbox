@@ -22,7 +22,7 @@ module sync_oneway(
 	output rxdat
 	);
 
-reg a, b, c;
+reg a = 0, b = 0, c = 0;
 
 always_ff @(posedge txclk)
 	a <= txdat;
