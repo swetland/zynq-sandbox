@@ -79,7 +79,7 @@ include build/vivado-xsim.mk
 MODULE_NAME := zybo-eth-capture
 MODULE_PART := xc7z010clg400-1
 MODULE_SRCS := hdl/zybo_eth_capture.sv
-MODULE_SRCS += hdl/zynq_ps_1m_1s.sv
+MODULE_SRCS += hdl/zynq_ps_1m_2s.sv
 MODULE_SRCS += hdl/mmcm_1in_3out.sv
 MODULE_SRCS += hdl/eth_capture.sv
 MODULE_SRCS += hdl/eth_rmii_rx.sv
@@ -89,7 +89,7 @@ MODULE_SRCS += hdl/sync_oneway.sv
 MODULE_SRCS += hdl/axi_ifc.sv
 MODULE_SRCS += hdl/axi_dma_writer.sv
 MODULE_SRCS += hdl/axi_registers.sv
-MODULE_SRCS += hdl/zybo_eth.xdc
+MODULE_SRCS += hdl/zybo_eth_capture.xdc
 include build/vivado-bitfile.mk
 
 MODULE_NAME := zybo-eth
