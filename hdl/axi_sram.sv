@@ -24,6 +24,7 @@ module axi_sram(
 `define IWIDTH $bits(s.awid)
 `define AWIDTH $bits(s.awaddr)
 `define DWIDTH $bits(s.wdata)
+`define LWIDTH $bits(s.awlen)
 
 // LIMITATIONS / TODO
 // - only supports INCR bursts (and treats all bursts as INCR type)
@@ -101,8 +102,8 @@ reg next_arready;
 reg next_rvalid;
 reg next_rlast;
 
-reg [7:0]rcount = 0;
-reg [7:0]next_rcount;
+reg [`LWIDTH-1:0]rcount = 0;
+reg [`LWIDTH-1:0]next_rcount;
 reg [`AWIDTH-1:0]raddr = 0;
 reg [`AWIDTH-1:0]next_raddr;
 
