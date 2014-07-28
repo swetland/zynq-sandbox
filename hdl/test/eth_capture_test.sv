@@ -72,6 +72,7 @@ eth_capture cap0(
 	.rxvalid(rxvalid),
 	.clk(clk),
 	.reset(cap_reset),
+	.enable(1),
 	.axi_dma(axi_dma)
 	);
 

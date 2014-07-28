@@ -76,6 +76,22 @@ MODULE_SRCS += hdl/axi_sram.sv
 #include build/verilator-sim.mk
 include build/vivado-xsim.mk
 
+MODULE_NAME := zybo-eth-capture
+MODULE_PART := xc7z010clg400-1
+MODULE_SRCS := hdl/zybo_eth_capture.sv
+MODULE_SRCS += hdl/zynq_ps_1m_1s.sv
+MODULE_SRCS += hdl/mmcm_1in_3out.sv
+MODULE_SRCS += hdl/eth_capture.sv
+MODULE_SRCS += hdl/eth_rmii_rx.sv
+MODULE_SRCS += hdl/pkt_bytes_to_words.sv
+MODULE_SRCS += hdl/xilinx_async_fifo.sv
+MODULE_SRCS += hdl/sync_oneway.sv
+MODULE_SRCS += hdl/axi_ifc.sv
+MODULE_SRCS += hdl/axi_dma_writer.sv
+MODULE_SRCS += hdl/axi_registers.sv
+MODULE_SRCS += hdl/zybo_eth.xdc
+include build/vivado-bitfile.mk
+
 MODULE_NAME := zybo-eth
 MODULE_PART := xc7z010clg400-1
 MODULE_SRCS := hdl/zybo_eth.sv

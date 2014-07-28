@@ -25,9 +25,19 @@ module eth_capture(
 	// interface to axi
 	input clk,
 	input reset,
-	axi_ifc axi_dma
+	input enable,
+	axi_ifc.master axi_dma
 	);
 
+parameter BASE_ADDR = 32'h10000000;
+
+wire active;
+sync_oneway sync_enable(
+	.txclk(clk),
+	.txdat(enable),
+	.rxclk(clk50),
+	.rxdat(active)
+	);
 
 wire [31:0]w_data;
 wire w_valid;
@@ -46,8 +56,8 @@ end
 pkt_bytes_to_words cap0(
 	.clk(clk50),
 	.rxdata(rxdata),
-	.rxvalid(rxvalid),
-	.rxeop(rxeop),
+	.rxvalid(rxvalid & active),
+	.rxeop(rxeop & active),
 	.data(w_data),
 	.bytecount(bytecount),
 	.eop(w_eop),
@@ -144,7 +154,7 @@ end
 reg fifo_reset = 0;
 
 wire [31:0]dfifo_data;
-reg dfifo_rd = 0;
+wire dfifo_rd;
 wire dfifo_empty;
 wire dfifo_active;
 
@@ -206,10 +216,12 @@ wire dma_start = (~cfifo_empty) & (~dma_busy);
 wire dma_busy;
 
 always @(posedge clk) begin
-	if (dma_start) begin
-		cfifo_rd <= 1;
-	end else begin
-		cfifo_rd <= 0;
+	if (cfifo_active & dfifo_active) begin
+		if (dma_start) begin
+			cfifo_rd <= 1;
+		end else begin
+			cfifo_rd <= 0;
+		end
 	end
 end
 
