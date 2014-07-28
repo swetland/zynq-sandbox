@@ -40,7 +40,10 @@ module eth_rmii_rx(
 	// transmit outputs which can drive
 	// an eth_rmii_tx to create a repeater
 	output reg [1:0]out_tx = 0,
-	output reg out_txen = 0
+	output reg out_txen = 0,
+
+	// start of packet strobe (for timestamping, etc)
+	output reg sop = 0
 	);
 
 typedef enum {
@@ -61,12 +64,14 @@ wire [7:0]rxshift = { rx, data[7:2] };
 reg [1:0]delay_tx = 0;
 reg delay_txen = 0;
 reg next_txen;
+reg next_sop;
 
 always_comb begin
 	next_state = state;
 	next_data = data;
 	next_valid = 0;
 	next_eop = 0;
+	next_sop = 0;
 	next_txen = delay_txen;
 
 	case (state)
@@ -75,6 +80,7 @@ always_comb begin
 		// only move to preamble on crs_dv AND a preamble di-bit
 		next_state = PRE1;
 		next_txen = 1;
+		next_sop = 1;
 	end
 	PRE1: if (rx == 2'b01) begin
 		next_state = PRE2;
@@ -146,6 +152,7 @@ always_ff @(posedge clk50) begin
 	valid <= next_valid;
 	data <= next_data;
 	eop <= next_eop;
+	sop <= next_sop;
 	delay_txen <= next_txen;
 	delay_tx <= rx;
 	out_txen <= next_txen ? delay_txen : 0;
