@@ -144,7 +144,15 @@ always_ff @(posedge clk) begin
 	m.wlast <= wlast_next;
 end
 
+
+assign m.arid = 0;
+assign m.araddr = 0;
 assign m.arvalid = 0;
-assign m.rvalid = 0;
+assign m.arburst = 0;
+assign m.arcache = 0;
+assign m.arlen = 0;
+assign m.arsize = 0;
+assign m.arlock = 0;
+assign m.rready = 0;
 
 endmodule
