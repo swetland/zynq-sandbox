@@ -208,7 +208,7 @@ xilinx_async_fifo #(
 	.o_active(cfifo_active)
 	);
 
-reg [31:0]dma_base = 32'h10000000;
+reg [31:0]dma_base = BASE_ADDR;
 
 wire [31:0]dma_addr = { dma_base[31:22], cfifo_data[15:0], 6'd0 };
 wire [3:0]dma_len = cfifo_data[19:16];
