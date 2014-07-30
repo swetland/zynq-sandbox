@@ -1,10 +1,30 @@
+// Copyright 2014 Brian Swetland <swetland@frotz.net>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
+`timescale 1ns/1ps
+
+`ifdef verilator
 module testbench(input clk);
-
+`else
+module testbench();
+reg clk = 0;
+always #5 clk = ~clk;
+`endif
 
 axi_ifc axi0();
 
-
+`ifdef SIMPLE_REGS
 wire [1:0]rreg;
 wire [1:0]wreg;
 reg [31:0]rdata = 32'hdeadbeef;
@@ -22,8 +42,7 @@ axi_registers regs(
 	.o_rd(rrd),
 	.o_wr(rwr)
 	);
-
-wire [31:0]tmp;
+reg [31:0]tmp = 32'heeeeeeee;
 
 always_ff @(posedge clk) begin
 	if (rrd) case(rreg)
@@ -35,6 +54,46 @@ always_ff @(posedge clk) begin
 	if (rwr & (wreg == 3))
 		tmp <= wdata;
 end
+
+`else
+reg_ifc ri0();
+reg_ifc ri1();
+reg_ifc ri2();
+reg_ifc ri3();
+reg_ifc ri4();
+reg_ifc ri5();
+reg_ifc ri6();
+reg_ifc ri7();
+
+axi_to_reg_x8 bridge0(
+	.clk(clk),
+	.axi(axi0),
+	.bank0(ri0),
+	.bank1(ri1),
+	.bank2(ri2),
+	.bank3(ri3),
+	.bank4(ri4),
+	.bank5(ri5),
+	.bank6(ri6),
+	.bank7(ri7)
+	);
+
+reg [31:0]tmp = 32'heeeeeeee;
+
+always_ff @(posedge clk) begin
+	if (ri1.rd) case(ri1.raddr)
+		0: ri1.rdata <= 32'h10101010;
+		1: ri1.rdata <= 32'h20202020;
+		2: ri1.rdata <= 32'h30303030;
+		3: ri1.rdata <= tmp;
+	endcase
+	if (ri1.wr & (ri1.waddr == 3))
+		tmp <= ri1.wdata;
+end
+
+assign ri3.rdata = 32'h33303330;
+
+`endif
 
 
 integer tick = 0;
@@ -56,6 +115,8 @@ axi_rw_engine engine0(
 	.data(data)
 	);
 
+integer BASE = 32'h00100000;
+
 always_comb begin
 	next_do_rd = 0;
 	next_do_wr = 0;
@@ -63,20 +124,20 @@ always_comb begin
 	next_data = 32'hffffffff;
 	if (tick == 10) begin
 		next_do_rd = 1;
-		next_addr = 4;
+		next_addr = BASE + 4;
 	end else if (tick == 20) begin
 		next_do_rd = 1;
-		next_addr = 0;
+		next_addr = 32'h00300000; //BASE + 0;
 	end else if (tick == 30) begin
 		next_do_wr = 1;
 		next_data = 32'haabbccdd;
-		next_addr = 12;
+		next_addr = BASE + 12;
 	end else if (tick == 40) begin
 		next_do_rd = 1;
-		next_addr = 4;
+		next_addr = BASE + 4;
 	end else if (tick == 50) begin
 		next_do_rd = 1;
-		next_addr = 12;
+		next_addr = BASE + 12;
 	end else if (tick == 60) begin
 		$finish;
 	end
@@ -226,3 +287,5 @@ assign m.arsize = 2; // 4 bytes
 assign m.arlock = 0;
 
 endmodule
+
+

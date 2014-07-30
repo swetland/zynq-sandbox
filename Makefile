@@ -65,7 +65,11 @@ MODULE_NAME := axi-regs-test
 MODULE_SRCS := hdl/test/axi_registers_test.sv
 MODULE_SRCS += hdl/axi_ifc.sv
 MODULE_SRCS += hdl/axi_registers.sv
-include build/verilator-sim.mk
+MODULE_SRCS += hdl/axi_to_reg_x8.sv
+MODULE_SRCS += hdl/axi_to_reg_impl.sv
+MODULE_SRCS += hdl/reg_ifc.sv
+include build/vivado-xsim.mk
+#include build/verilator-sim.mk
 
 MODULE_NAME := eth-capture-test
 MODULE_SRCS := hdl/test/eth_capture_test.sv
