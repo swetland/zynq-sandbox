@@ -36,8 +36,8 @@ module axi_registers (
 	output reg [R_ADDR_WIDTH-1:0]o_rreg = 0,
 	output reg [R_ADDR_WIDTH-1:0]o_wreg = 0,
 	input wire [31:0]i_rdata,
-	output reg [31:0]o_wdata = 0,
-	output wire o_rd,
+	output wire [31:0]o_wdata,
+	output reg o_rd = 0,
 	output wire o_wr
 	);
 
