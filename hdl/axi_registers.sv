@@ -33,12 +33,12 @@ module axi_registers (
 	axi_ifc.slave s,
 
 	// Register File Interface
-	output reg [R_ADDR_WIDTH-1:0]o_rreg,
-	output reg [R_ADDR_WIDTH-1:0]o_wreg,
+	output reg [R_ADDR_WIDTH-1:0]o_rreg = 0,
+	output reg [R_ADDR_WIDTH-1:0]o_wreg = 0,
 	input wire [31:0]i_rdata,
-	output reg [31:0]o_wdata,
-	output reg o_rd,
-	output reg o_wr
+	output reg [31:0]o_wdata = 0,
+	output wire o_rd,
+	output wire o_wr
 	);
 
 parameter integer R_ADDR_WIDTH = 2;
@@ -103,7 +103,7 @@ always_comb begin
 	endcase
 end
 
-typedef enum { R_ADDR, R_CAPTURE, R_DATA } rstate_t;
+typedef enum { R_ADDR, R_CAPTURE, R_CAPTURE2, R_DATA } rstate_t;
 
 rstate_t rstate = R_ADDR;
 rstate_t rstate_next;
@@ -112,9 +112,9 @@ reg arready_next;
 reg rvalid_next;
 reg rlast_next;
 
-//reg [31:0]rdata;
-//reg [31:0]rdata_next;
-assign s.rdata = i_rdata;
+reg [31:0]rdata = 0;
+reg [31:0]rdata_next;
+assign s.rdata = rdata;
 
 reg rd_next;
 
@@ -124,7 +124,7 @@ assign s.rid = trid;
 
 always_comb begin 
 	rstate_next = rstate;
-	//rdata_next = rdata;
+	rdata_next = rdata;
 	rreg_next = o_rreg;
 	trid_next = trid;
 	arready_next = 0;
@@ -143,10 +143,14 @@ always_comb begin
 		end
 	R_CAPTURE: begin
 			// present address and rd to register file
+			rstate_next = R_CAPTURE2;
+		end
+	R_CAPTURE2: begin
+			// capture register file output
 			rstate_next = R_DATA;
 			rvalid_next = 1;
 			rlast_next = 1;
-			//rdata_next = i_rdata;
+			rdata_next = i_rdata;
 		end
 	R_DATA: if (s.rready) begin
 			// present register data to AXI
@@ -169,7 +173,7 @@ always_ff @(posedge clk) begin
 	o_wreg <= wreg_next;
 
 	rstate <= rstate_next;
-	//rdata <= rdata_next;
+	rdata <= rdata_next;
 	trid <= trid_next;
 	s.arready <= arready_next;
 	s.rvalid <= rvalid_next;

@@ -61,6 +61,12 @@ MODULE_SRCS += hdl/eth_rmii_tx.sv
 MODULE_SRCS += hdl/eth_rmii_rx.sv
 include build/verilator-sim.mk
 
+MODULE_NAME := axi-regs-test
+MODULE_SRCS := hdl/test/axi_registers_test.sv
+MODULE_SRCS += hdl/axi_ifc.sv
+MODULE_SRCS += hdl/axi_registers.sv
+include build/verilator-sim.mk
+
 MODULE_NAME := eth-capture-test
 MODULE_SRCS := hdl/test/eth_capture_test.sv
 MODULE_SRCS += hdl/test/eth_packet_gen.sv
