@@ -68,9 +68,9 @@ typedef enum { DATA, EOP0, EOP1, EOP2 } state_t;
 state_t state = DATA;
 state_t next_state;
 
-reg [19:0]cfifo_in = 0;
+reg [20:0]cfifo_in = 0;
 reg [31:0]dfifo_in = 0;
-reg [19:0]next_cfifo_in;
+reg [20:0]next_cfifo_in;
 reg [31:0]next_dfifo_in;
 reg cfifo_wr = 0;
 reg dfifo_wr = 0;
@@ -103,28 +103,28 @@ always_comb begin
 			next_dfifo_in = w_data;
 			next_dfifo_wr = 1;
 			if (dcount_plus_one == 15) begin
-				next_cfifo_in = { 4'd15, dbase, daddr };
+				next_cfifo_in = { 1'b0, 4'd15, dbase, daddr };
 				next_cfifo_wr = 1;
 				next_daddr = daddr + 1;
 			end
 		end else if (w_eop) begin
 			next_state = EOP0;
-			next_dfifo_in = { 20'h00000, bytecount };
+			next_dfifo_in = rxtimestamp[31:0];
 			next_dfifo_wr = 1;
 			if (dcount != 15) begin
-				next_cfifo_in = { dcount, dbase, daddr };
+				next_cfifo_in = { 1'b0, dcount, dbase, daddr };
 				next_cfifo_wr = 1;
 			end
 		end
 	end
 	EOP0: begin
 		next_state = EOP1;
-		next_dfifo_in = rxtimestamp[31:0];
+		next_dfifo_in = rxtimestamp[63:32];
 		next_dfifo_wr = 1;
 	end
 	EOP1: begin
 		next_state = EOP2;
-		next_dfifo_in = rxtimestamp[63:32];
+		next_dfifo_in = { 20'h00000, bytecount };
 		next_dfifo_wr = 1;
 	end
 	EOP2: begin
@@ -134,7 +134,7 @@ always_comb begin
 		next_dbase = dbase + 1;
 		next_dfifo_in = 32'h00000001; // status
 		next_dfifo_wr = 1;
-		next_cfifo_in = { 4'd3, dbase, 6'd0 };
+		next_cfifo_in = { 1'b1, 4'd3, dbase, 6'd0 };
 		next_cfifo_wr = 1;
 	end
 	endcase
@@ -158,7 +158,7 @@ wire dfifo_rd;
 wire dfifo_empty;
 wire dfifo_active;
 
-wire [19:0]cfifo_data;
+wire [20:0]cfifo_data;
 reg cfifo_rd = 0;
 wire cfifo_empty;
 wire cfifo_active;
@@ -194,7 +194,7 @@ xilinx_async_fifo #(
 // CMD: burst(4) addr(16)  -- addr is A[21:6]
 
 xilinx_async_fifo #(
-	.WIDTH(20)
+	.WIDTH(21)
 	) cfifo ( 
 	.wrclk(clk50),
 	.rdclk(clk),
@@ -210,7 +210,11 @@ xilinx_async_fifo #(
 
 reg [31:0]dma_base = BASE_ADDR;
 
-wire [31:0]dma_addr = { dma_base[31:22], cfifo_data[15:0], 6'd0 };
+// status writes are 4 words at byte offset 48
+// data writes are always at byte offset 0
+wire [5:0]dma_byte = cfifo_data[20] ? 6'd48 : 6'd0;
+
+wire [31:0]dma_addr = { dma_base[31:22], cfifo_data[15:0], dma_byte };
 wire [3:0]dma_len = cfifo_data[19:16];
 wire dma_start = (~cfifo_empty) & (~dma_busy);
 wire dma_busy;
