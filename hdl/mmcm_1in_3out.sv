@@ -20,10 +20,10 @@ parameter OUT2_DIV = 2;
 
 wire clkfb, clkfb_i, clk0, clk1, clk2;
 
-BUFG bufg_clkfb(.I(clkfb_i), .O(clkfb));
-BUFG bufg_pixclk(.I(clk0), .O(o_clk0));
-BUFG bufg_pixclkx5(.I(clk1), .O(o_clk1));
-BUFG bufg_pixclkx10(.I(clk2), .O(o_clk2));
+BUFG bufg_fb(.I(clkfb_i), .O(clkfb));
+BUFG bufg_clk0(.I(clk0), .O(o_clk0));
+BUFG bufg_clk1(.I(clk1), .O(o_clk1));
+BUFG bufg_clk2(.I(clk2), .O(o_clk2));
 
 MMCME2_ADV #(
 	.BANDWIDTH("OPTIMIZED"),
