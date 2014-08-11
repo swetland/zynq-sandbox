@@ -22,6 +22,7 @@
 //        rxeop may not happen on same clock as rxvalid
 // output: data and bytecount presented with valid=1
 //         eop=1 indicates end of stream
+//         err=1 indicates crc error (on clock where eop==1)
 //         eop and valid will not happen on the same clock
 
 module pkt_bytes_to_words(
@@ -33,8 +34,29 @@ module pkt_bytes_to_words(
 	output [31:0]data,
 	output [11:0]bytecount,
 	output reg valid = 0,
-	output reg eop = 0
+	output reg eop = 0,
+	output reg err = 0
 	);
+
+parameter WITH_CRC_CHECK = 1;
+
+wire crc_err;
+
+generate if (WITH_CRC_CHECK) begin
+wire [31:0]crc;
+
+eth_crc32 crc0(
+	.clk(clk),
+	.en(rxvalid),
+	.rst(eop),
+	.dat(rxdata),
+	.crc(crc)
+	);
+
+assign crc_err = (crc != 32'hdebb20e3);
+end else begin
+assign crc_err = 0;
+end endgenerate
 
 typedef enum { IDLE, BYTE0, BYTE1, BYTE2, BYTE3, EOP } state_t;
 state_t state = IDLE;
@@ -138,6 +160,7 @@ always_ff @(posedge clk) begin
 	byte3 <= next_byte3;
 	valid <= next_valid;
 	eop <= next_eop;
+	err <= crc_err;
 end
 
 endmodule
