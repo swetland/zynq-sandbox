@@ -8,6 +8,14 @@ MODULE_SRCS := hdl/eth_mdio.sv
 MODULE_SRCS += hdl/test/eth_mdio_test.sv
 include build/verilator-sim.mk
 
+MODULE_NAME := zybo-adc
+MODULE_PART := xc7z010clg400-1
+MODULE_SRCS := hdl/zybo_adc.sv
+MODULE_SRCS += hdl/axi_ifc.sv hdl/axi_registers.sv
+MODULE_SRCS += hdl/zynq_ps_1m.sv
+MODULE_SRCS += hdl/zybo_adc.xdc
+include build/vivado-bitfile.mk
+
 MODULE_NAME := zybo-simple-io
 MODULE_PART := xc7z010clg400-1
 MODULE_SRCS := hdl/zybo_simple_io.sv
