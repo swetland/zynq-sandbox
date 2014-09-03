@@ -25,6 +25,14 @@ MODULE_SRCS += hdl/zynq_ps_1m.sv
 MODULE_SRCS += hdl/zybo_simple_io.xdc
 include build/vivado-bitfile.mk
 
+MODULE_NAME := uzed-simple-io
+MODULE_PART := xc7z020clg400-1
+MODULE_SRCS := hdl/uzed_simple_io.sv
+MODULE_SRCS += hdl/axi_ifc.sv hdl/axi_registers.sv
+MODULE_SRCS += hdl/zynq_ps_1m.sv
+MODULE_SRCS += hdl/uzed_simple_io.xdc
+include build/vivado-bitfile.mk
+
 HDMI_SRCS := \
 	hdl/hdmi_core.sv \
 	hdl/mmcm_1in_3out.sv \
