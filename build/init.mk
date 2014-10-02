@@ -21,3 +21,5 @@ endif
 
 ALL_TARGETS :=
 
+# default: assume build is adjacent to top level Makefile
+BUILD ?= build

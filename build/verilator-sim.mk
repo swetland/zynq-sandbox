@@ -18,7 +18,7 @@ MODULE_VLG_SRCS := $(filter-out %.hex,$(MODULE_SRCS))
 MODULE_OPTS := --top-module testbench 
 #-Ihdl
 MODULE_OPTS += --Mdir $(MODULE_OBJDIR)
-MODULE_OPTS += --exe ../../build/testbench.cpp
+MODULE_OPTS += --exe ../../$(BUILD)/testbench.cpp
 MODULE_OPTS += --cc
 MODULE_OPTS += -DSIMULATION
 

@@ -44,7 +44,7 @@ $(MODULE_BIT): $(MODULE_HEX_SRCS) $(MODULE_CFG)
 	@mkdir -p $(_DIR) out
 	@rm -f $(_DIR)/log.txt
 	@for hex in $(_HEX) ; do cp $$hex $(_DIR) ; done
-	@(cd $(_DIR) && $(VIVADO) -mode batch -log log.txt -nojournal -source ../../build/build-bitfile.tcl)
+	@(cd $(_DIR) && $(VIVADO) -mode batch -log log.txt -nojournal -source ../../$(BUILD)/build-bitfile.tcl)
 
 $(MODULE_NAME)-rtl: _HEX := $(MODULE_HEX_SRCS)
 $(MODULE_NAME)-rtl: _DIR := $(MODULE_OBJDIR)
@@ -54,7 +54,7 @@ $(MODULE_NAME)-rtl: $(MODULE_HEX_SRCS) $(MODULE_CFG)
 	@mkdir -p $(_DIR) out
 	@rm -f $(_DIR)/log.txt
 	@for hex in $(_HEX) ; do cp $$hex $(_DIR) ; done
-	@(cd $(_DIR) && $(VIVADO) -log log.rtl.txt -nojournal -source ../../build/elaborate-design.tcl)
+	@(cd $(_DIR) && $(VIVADO) -log log.rtl.txt -nojournal -source ../../$(BUILD)/elaborate-design.tcl)
 
 $(MODULE_NAME): $(MODULE_BIT)
 
