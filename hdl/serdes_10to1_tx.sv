@@ -18,7 +18,7 @@ OSERDESE2 #(
 	.DATA_RATE_TQ("SDR"),
 	.DATA_WIDTH(10),
 	.TRISTATE_WIDTH(1),
-	.SERDES_MODE("MASTER"),
+	.SERDES_MODE("MASTER")
 	)serdes_lo(
 	.CLK(clkx5),
 	.CLKDIV(clk),
@@ -54,7 +54,7 @@ OSERDESE2 #(
 	.DATA_RATE_TQ("SDR"),
 	.DATA_WIDTH(10),
 	.TRISTATE_WIDTH(1),
-	.SERDES_MODE("SLAVE"),
+	.SERDES_MODE("SLAVE")
 	)serdes_hi(
 	.CLK(clkx5),
 	.CLKDIV(clk),
