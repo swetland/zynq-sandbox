@@ -5,8 +5,8 @@
 
 VERILATOR := VERILATOR_ROOT=/work/verilator /work/verilator/bin/verilator
 
-VIVADOPATH := /work/xilinx/Vivado/2014.2
-XSDKPATH := /work/xilinx/SDK/2014.2
+VIVADOPATH := /work/xilinx/Vivado/2014.3
+XSDKPATH := /work/xilinx/SDK/2014.3
 
 VIVADO := $(VIVADOPATH)/bin/vivado
 XELAB := $(VIVADOPATH)/bin/xelab
