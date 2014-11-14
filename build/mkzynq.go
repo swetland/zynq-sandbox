@@ -152,6 +152,12 @@ func fixup_axi(count int, prefix string, mapping string, kind string) {
 		simple_fixup(prefix + num + "ARPROT", defval)
 		simple_fixup(prefix + num + "WID", defval)
 		simple_fixup(prefix + num + "ARESETN", "")
+		simple_fixup(prefix + num + "WRISSUECAP1EN", "0")
+		simple_fixup(prefix + num + "RDISSUECAP1EN", "0")
+		simple_fixup(prefix + num + "WACOUNT", "")
+		simple_fixup(prefix + num + "RACOUNT", "")
+		simple_fixup(prefix + num + "WCOUNT", "")
+		simple_fixup(prefix + num + "RCOUNT", "")
 		mkport(kind, "", mapping + num)
 		mkport("input", "", mapping + num + "_clk")
 	}
