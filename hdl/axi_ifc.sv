@@ -24,6 +24,7 @@ parameter AXI3 = 0;
 localparam LENMAX = AXI3 ? 3 : 7;
 localparam LOCKMAX = AXI3 ? 1 : 0;
 localparam SIZEMAX = AXI3 ? 1 : 2;
+localparam STRBWIDTH = (DWIDTH == 64) ? 8 : 4;
 
 logic [IWIDTH-1:0] awid;
 logic [AWIDTH-1:0] awaddr;
@@ -36,7 +37,7 @@ logic awvalid;
 logic awready;
 
 logic [DWIDTH-1:0] wdata;
-logic [3:0]wstrb;
+logic [STRBWIDTH-1:0]wstrb;
 logic wvalid;
 logic wready;
  logic wlast;
