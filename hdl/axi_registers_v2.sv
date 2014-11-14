@@ -38,8 +38,6 @@ assign rm.rd = rd;
 assign rm.raddr = rreg;
 assign rm.waddr = wreg;
 
-parameter R_ADDR_WIDTH = 2;
-
 typedef enum { W_ADDR, W_DATA, W_RESP } wstate_t;
 
 assign s.bresp = 0;
@@ -55,8 +53,8 @@ reg awready_next;
 reg wready_next;
 reg bvalid_next;
 
-reg [R_ADDR_WIDTH-1:0]wreg_next;
-reg [R_ADDR_WIDTH-1:0]rreg_next;
+reg [$bits(rm.waddr)-1:0]wreg_next;
+reg [$bits(rm.raddr)-1:0]rreg_next;
 
 assign rm.wdata = s.wdata;
 assign rm.wr = (s.wvalid & s.wready);
@@ -79,7 +77,7 @@ always_comb begin
 			wstate_next = W_DATA;
 			wready_next = 1;
 			twid_next = s.awid;
-			wreg_next = s.awaddr[R_ADDR_WIDTH+1:2];
+			wreg_next = s.awaddr[$bits(rm.waddr)+1:2];
 		end else begin
 			awready_next = 1;
 		end
@@ -131,7 +129,7 @@ always_comb begin
 			// accept address from AXI
 			rstate_next = R_CAPTURE;
 			trid_next = s.arid;
-			rreg_next = s.araddr[R_ADDR_WIDTH+1:2];
+			rreg_next = s.araddr[$bits(rm.raddr)+1:2];
 			rd_next = 1;
 		end else begin
 			arready_next = 1;
