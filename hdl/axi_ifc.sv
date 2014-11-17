@@ -73,6 +73,18 @@ modport master (
 	input arready, rid, rdata, rresp, rvalid, rlast
 );
 
+modport writer (
+	output awid, awaddr, awvalid, wdata, wstrb, wvalid, bready,
+	output awburst, awcache, awlen, awsize, awlock, wlast,
+	input awready, wready, bid, bresp, bvalid
+);
+
+modport reader (
+	output arid, araddr, arvalid, rready,
+	output arburst, arcache, arlen, arsize, arlock,
+	input arready, rid, rdata, rresp, rvalid, rlast
+);
+
 modport slave (
 	input awid, awaddr, awvalid, wdata, wstrb, wvalid, bready,
 	input awburst, awcache, awlen, awsize, awlock, wlast,
