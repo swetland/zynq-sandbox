@@ -134,6 +134,19 @@ MODULE_SRCS += hdl/nexys4.xdc
 MODULE_SRCS += hdl/testpacket.hex
 include build/vivado-bitfile.mk
 
+MODULE_NAME := zybo-axi-test
+MODULE_PART := xc7z010clg400-1
+MODULE_SRCS := \
+	hdl/zybo-fclk-100m.xdc \
+	hdl/zybo-axi-test.sv \
+	hdl/axi_ifc.sv \
+	hdl/reg_ifc.sv \
+	hdl/axi_hp_dma_reader.sv \
+	hdl/axi_hp_dma_writer.sv \
+	hdl/axi_registers_v2.sv \
+	hdl/zynq_ps_1m_4hps.sv
+include build/vivado-bitfile.mk
+
 clean::
 	rm -rf sim synth out
 
