@@ -23,5 +23,6 @@ report_drc -file ./post-route-drc.txt
 write_verilog -force ./post-route-netlist.v
 write_xdc -no_fixed_only -force ./post-route-constr.xdc
 
-write_bitstream -force -file $BITFILE
+set_property BITSTREAM.GENERAL.COMPRESS True [current_design]
+write_bitstream -force -bin_file $BITFILE
 
